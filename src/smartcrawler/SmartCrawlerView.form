@@ -18,15 +18,20 @@
                   </Group>
                   <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jTextField1" pref="231" max="32767" attributes="1"/>
+                      <Component id="locationText" pref="231" max="32767" attributes="1"/>
                       <Component id="urlListText" alignment="0" min="-2" pref="231" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton2" min="0" pref="0" max="32767" attributes="1"/>
-                      <Component id="jButton1" alignment="0" min="-2" pref="34" max="-2" attributes="1"/>
+                      <Component id="locationButton" min="0" pref="0" max="32767" attributes="1"/>
+                      <Component id="urlListButton" alignment="0" min="-2" pref="34" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="245" max="-2" attributes="0"/>
+                  <Component id="fetchSeedPages" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="390" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -37,15 +42,17 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="urlListLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="urlListText" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                      <Component id="jButton1" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="urlListButton" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="locationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jTextField1" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                      <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="locationText" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                      <Component id="locationButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="178" max="32767" attributes="0"/>
+                  <EmptySpace pref="73" max="32767" attributes="0"/>
+                  <Component id="fetchSeedPages" min="-2" pref="35" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -71,25 +78,37 @@
             <Property name="name" type="java.lang.String" value="locationLabel" noResource="true"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField1">
+        <Component class="javax.swing.JTextField" name="locationText">
           <Properties>
-            <Property name="text" type="java.lang.String" resourceKey="jTextField1.text"/>
-            <Property name="name" type="java.lang.String" value="jTextField1" noResource="true"/>
+            <Property name="text" type="java.lang.String" resourceKey="locationText.text"/>
+            <Property name="name" type="java.lang.String" value="locationText" noResource="true"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="urlListButton">
           <Properties>
             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
               <action class="smartcrawler.SmartCrawlerView" id="loadUrlList" methodName="loadUrlList"/>
             </Property>
-            <Property name="text" type="java.lang.String" resourceKey="jButton1.text"/>
-            <Property name="name" type="java.lang.String" value="jButton1" noResource="true"/>
+            <Property name="text" type="java.lang.String" resourceKey="urlListButton.text"/>
+            <Property name="name" type="java.lang.String" value="urlListButton" noResource="true"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton2">
+        <Component class="javax.swing.JButton" name="locationButton">
           <Properties>
-            <Property name="text" type="java.lang.String" resourceKey="jButton2.text"/>
-            <Property name="name" type="java.lang.String" value="jButton2" noResource="true"/>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="smartcrawler.SmartCrawlerView" id="loadLocation" methodName="loadLocation"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="locationButton.text"/>
+            <Property name="name" type="java.lang.String" value="locationButton" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="fetchSeedPages">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="smartcrawler.SmartCrawlerView" id="fetchSeedPages" methodName="fetchSeedPages"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="fetchSeedPages.text"/>
+            <Property name="name" type="java.lang.String" value="fetchSeedPages" noResource="true"/>
           </Properties>
         </Component>
       </SubComponents>

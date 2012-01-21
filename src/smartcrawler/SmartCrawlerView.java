@@ -102,9 +102,10 @@ public class SmartCrawlerView extends FrameView {
         urlListLabel = new javax.swing.JLabel();
         urlListText = new javax.swing.JTextField();
         locationLabel = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        locationText = new javax.swing.JTextField();
+        urlListButton = new javax.swing.JButton();
+        locationButton = new javax.swing.JButton();
+        fetchSeedPages = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -129,16 +130,21 @@ public class SmartCrawlerView extends FrameView {
         locationLabel.setText(resourceMap.getString("locationLabel.text")); // NOI18N
         locationLabel.setName("locationLabel"); // NOI18N
 
-        jTextField1.setText(resourceMap.getString("jTextField1.text")); // NOI18N
-        jTextField1.setName("jTextField1"); // NOI18N
+        locationText.setText(resourceMap.getString("locationText.text")); // NOI18N
+        locationText.setName("locationText"); // NOI18N
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(smartcrawler.SmartCrawlerApp.class).getContext().getActionMap(SmartCrawlerView.class, this);
-        jButton1.setAction(actionMap.get("loadUrlList")); // NOI18N
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setName("jButton1"); // NOI18N
+        urlListButton.setAction(actionMap.get("loadUrlList")); // NOI18N
+        urlListButton.setText(resourceMap.getString("urlListButton.text")); // NOI18N
+        urlListButton.setName("urlListButton"); // NOI18N
 
-        jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
-        jButton2.setName("jButton2"); // NOI18N
+        locationButton.setAction(actionMap.get("loadLocation")); // NOI18N
+        locationButton.setText(resourceMap.getString("locationButton.text")); // NOI18N
+        locationButton.setName("locationButton"); // NOI18N
+
+        fetchSeedPages.setAction(actionMap.get("fetchSeedPages")); // NOI18N
+        fetchSeedPages.setText(resourceMap.getString("fetchSeedPages.text")); // NOI18N
+        fetchSeedPages.setName("fetchSeedPages"); // NOI18N
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -151,13 +157,17 @@ public class SmartCrawlerView extends FrameView {
                     .addComponent(locationLabel))
                 .addGap(68, 68, 68)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                    .addComponent(locationText, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
                     .addComponent(urlListText, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(65, 65, 65)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(locationButton, 0, 0, Short.MAX_VALUE)
+                    .addComponent(urlListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(82, 82, 82))
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(245, 245, 245)
+                .addComponent(fetchSeedPages)
+                .addContainerGap(390, Short.MAX_VALUE))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,13 +176,15 @@ public class SmartCrawlerView extends FrameView {
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(urlListLabel)
                     .addComponent(urlListText, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(urlListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(47, 47, 47)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(locationLabel)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
-                .addContainerGap(178, Short.MAX_VALUE))
+                    .addComponent(locationText, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(locationButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
+                .addComponent(fetchSeedPages, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(70, 70, 70))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -244,7 +256,7 @@ public class SmartCrawlerView extends FrameView {
         }
         }
         JFileChooser fc = new JFileChooser();    
-        fc.addChoosableFileFilter(new MyFilter());
+        fc.addChoosableFileFilter(new MyFilter());      
         int reval = fc.showOpenDialog(fc);
         if(reval == JFileChooser.APPROVE_OPTION)
         {
@@ -253,16 +265,35 @@ public class SmartCrawlerView extends FrameView {
         
     }
 
+    @Action
+    public void loadLocation() {
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int reval = fc.showOpenDialog(fc);
+        if(reval == JFileChooser.APPROVE_OPTION)
+        {
+            this.locationText.setText(fc.getSelectedFile().toString());
+        }
+    }
+
+    @Action
+    public void fetchSeedPages() {
+        FetchSeedPages fsp = new FetchSeedPages(this.urlListText.getText(), this.locationText.getText());
+        fsp.start();
+        
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton fetchSeedPages;
+    private javax.swing.JButton locationButton;
     private javax.swing.JLabel locationLabel;
+    private javax.swing.JTextField locationText;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
+    private javax.swing.JButton urlListButton;
     private javax.swing.JLabel urlListLabel;
     private javax.swing.JTextField urlListText;
     // End of variables declaration//GEN-END:variables
