@@ -48,8 +48,8 @@ public class FetchSeedPages extends Thread {
                 bw.write(text);
                 bw.close();               
             }
-            Stemmer tfidf = new Stemmer(dirLocation);
-            tfidf.countWords();
+            ConstructTable constructor = new ConstructTable(dirLocation);
+            constructor.constructTable();
             System.out.println("Finished");
         }
         catch(Exception ex)
