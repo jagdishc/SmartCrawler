@@ -42,8 +42,7 @@ class Document
          Double[] tempdata;
          words = new TreeMap<String, Double[]>();
          try
-         {
-            
+         {            
             line = br.readLine();
             while (line != null) 
             {

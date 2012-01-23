@@ -450,8 +450,5 @@ class PorterStemmer
   /** Test program for demonstrating the Stemmer.  It reads a file and
    * stems each word, writing the result to standard out.
    * Usage: Stemmer file-name
-   */
-  public static void main(String[] args) {
-
-  }
+   */  
 }
