@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import org.jsoup.Jsoup;
@@ -17,7 +18,7 @@ public class FetchSeedPages extends Thread {
     
     FetchProgress fp;
     File urlFile,dirLocation;
-    
+    TopicsWeightTable TWT;
     
     public FetchSeedPages(String file, String location)
     {
@@ -55,7 +56,9 @@ public class FetchSeedPages extends Thread {
                 bw.close();               
             }
             ConstructTable constructor = new ConstructTable(dirLocation);
-            constructor.constructTable();
+            Map<String, Double[]> weights = constructor.constructTable();
+            TWT = new TopicsWeightTable(weights);
+            TWT.setVisible(true);
             System.out.println("Finished");
         }
         catch(Exception ex)

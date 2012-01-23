@@ -94,6 +94,7 @@ class Document
             worddata[2] = tfidf;
             vectorlength += tfidf * tfidf;
             words.put(word, worddata);
+            parent.words.put(word, worddata);
             System.out.println(word + " = " + worddata[0] + ", " + worddata[1] + ", " + worddata[2]);
         }
         vectorlength = Math.sqrt(vectorlength);
@@ -103,7 +104,8 @@ class Document
 public class TfIdf {
     
     File locationDir;    
-    Map<String, Double[]> corpus;    
+    Map<String, Double[]> corpus; 
+    Map<String, Double[]>words;
     Map<String, Document> documents;    
     static int totalDocs,numOfDocs;
     
@@ -112,6 +114,7 @@ public class TfIdf {
         locationDir = stemLocation;
         corpus = new TreeMap<String, Double[]>();    
         documents = new TreeMap<String,Document>();
+        words = new TreeMap<String, Double[]>();
         numOfDocs = 0;
         totalDocs = 0;
     }
@@ -125,7 +128,7 @@ public class TfIdf {
         }
         totalDocs = files.length;
         //System.out.println("Word Count: " + corpus.toString());    
-        score();
+        score();        
     }
     private void countWords(File file)
     {
@@ -162,6 +165,6 @@ public class TfIdf {
         {
             word = it.next();
             documents.get(word).calculateTfIdf(this);
-        }
+        }        
     }    
 }

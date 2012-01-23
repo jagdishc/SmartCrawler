@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 class MyFilter implements FileFilter 
 {
@@ -33,19 +34,21 @@ public class ConstructTable {
         
     }
     
-    public void constructTable()
+    public Map<String, Double[]> constructTable()
     {        
         try
         {
             File fileList[] = locationPath.listFiles(new MyFilter());            
             File stemLocation = stemming(fileList);    
-            TfIdf tfidf = new TfIdf(stemLocation);
-            tfidf.documentBuilder();
+            TfIdf tfidf = new TfIdf(locationPath);
+            tfidf.documentBuilder();   
+            return tfidf.words;
         }
         catch(Exception ex)
         {
             ex.printStackTrace();
-        }
+            return null;
+        }        
     }
     
     public File stemming(File[] fileList)
