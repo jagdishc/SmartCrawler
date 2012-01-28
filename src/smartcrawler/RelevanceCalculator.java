@@ -173,13 +173,13 @@ public class RelevanceCalculator extends Thread
         String parent, div, anchor;
         float relevant_yes, relevant_no, temp_parent[], temp_div[], temp_anchor[];
         
-        System.out.println("P(yes): " + p_of_yes);
-        System.out.println("P(no): " + p_of_no);
-        
-        System.out.println("n(yes): " + no_of_yes);
-        System.out.println("n(no): " + no_of_no);
-        
-        System.out.println("Total: " + total);
+//        System.out.println("P(yes): " + p_of_yes);
+//        System.out.println("P(no): " + p_of_no);
+//        
+//        System.out.println("n(yes): " + no_of_yes);
+//        System.out.println("n(no): " + no_of_no);
+//        
+//        System.out.println("Total: " + total);
         if(parent_score > 0.4)
         {
             parent = "yes";
@@ -205,7 +205,7 @@ public class RelevanceCalculator extends Thread
             anchor = "no";
         }
         
-        System.out.println("parent: " + parent);
+//        System.out.println("parent: " + parent);
         
         temp_parent = getCount("parent", parent);
         temp_div = getCount("div", div);
@@ -214,16 +214,16 @@ public class RelevanceCalculator extends Thread
         relevant_yes = temp_parent[0]*temp_div[0]*temp_anchor[0];
         relevant_no = temp_parent[1]*temp_div[1]*temp_anchor[1];
         
-        System.out.println("parent_s: " + temp_parent[0]);
-        System.out.println("div_s: " + temp_div[0]);
-        System.out.println("anchor_s: " + temp_anchor[0]);
-        
-        System.out.println("parent_n: " + temp_parent[1]);
-        System.out.println("div_n: " + temp_div[1]);
-        System.out.println("anchor_n: " + temp_anchor[1]);
-        
-        System.out.println("relevant_yes: " + relevant_yes);
-        System.out.println("relevant_no: " + relevant_no);
+//        System.out.println("parent_s: " + temp_parent[0]);
+//        System.out.println("div_s: " + temp_div[0]);
+//        System.out.println("anchor_s: " + temp_anchor[0]);
+//        
+//        System.out.println("parent_n: " + temp_parent[1]);
+//        System.out.println("div_n: " + temp_div[1]);
+//        System.out.println("anchor_n: " + temp_anchor[1]);
+//        
+//        System.out.println("relevant_yes: " + relevant_yes);
+//        System.out.println("relevant_no: " + relevant_no);
         
         values temp;
         
