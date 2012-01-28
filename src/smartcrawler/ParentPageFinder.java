@@ -12,23 +12,27 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class ParentPageFinder {
+public class ParentPageFinder extends Thread
+{
     
     Map<String, String[]> parentPages;
     Map<String, Double> averageParentPage;
     Map<String, Double> wt;
     public static final String link = "http://www.seoprofiler.com/analyze/";
+      
     
     public ParentPageFinder()
     {
         
     }
     
-    public ParentPageFinder(TreeMap<String, Double> weight)
+    public ParentPageFinder(TreeMap<String, Double> weight) 
     {
+        
         wt = weight;
         parentPages = new HashMap<String, String[]>();        
         averageParentPage = new HashMap<String, Double>();
+       
     }
     
     public void doScrape(String url)
@@ -39,7 +43,7 @@ public class ParentPageFinder {
         String[] parents = new String[5];
         
         try
-        {
+        {            
             doc = Jsoup.connect(webPage).get();
             Element ele = doc.getElementById("backlinks");
             Elements divs = ele.getElementsByClass("nobr"), urls;
@@ -55,14 +59,16 @@ public class ParentPageFinder {
                     parents[i] = x.absUrl("href");
                     i += 1;
                 }
-                
+
             }
             if(!(parentPages.containsKey(url)))
             {
                 parentPages.put(url, parents);                
             }           
-           
+
             getParentPageRelevancy(url, parents);
+                
+             
         }
         catch(Exception e)
         {
@@ -112,6 +118,11 @@ public class ParentPageFinder {
             e.printStackTrace();
         }
         
+    }
+    
+    public void run()
+    {
+        //doScrape();
     }
     
 //    public static void main(String args[])

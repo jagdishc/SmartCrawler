@@ -25,28 +25,19 @@ class values
 
 public class RelevanceCalculator extends Thread
 {
-    File loc;
-    TreeMap<String, Double> wt;   
+    File loc;    
     int total = 0, no_of_yes = 0, no_of_no = 0;
     float p_of_yes, p_of_no;
     Vector valueVector;
-    values value;
-    String link;
-    double[] div_count;
-    Vector vectorToSearch, vectorUrlsDiscarded;
+    values value;              
     
-    public RelevanceCalculator(File location, String urls, double[] div_counts, TreeMap<String, Double> weight, Vector x, Vector y)
+    public RelevanceCalculator(File location)
     {
-        loc = location;
-        link = urls;
-        div_count = div_counts;
-        wt = weight;
+        loc = location;       
         String url,text;
         StringTokenizer tokens;
         String[] data = new String[4];
-        valueVector = new Vector();       
-        vectorToSearch = x;
-        vectorUrlsDiscarded = y;
+        valueVector = new Vector();        
         
         try
         {
@@ -84,22 +75,31 @@ public class RelevanceCalculator extends Thread
         }
     }
     
-    public String findRelevancy()
+    public String findRelevancy(String url, TreeMap<String, Double> wt, double[] div_count)
     {
         Double pRelevanceValue;
-        ParentPageFinder ppf = new ParentPageFinder(wt);
-        ppf.doScrape(link);
-        pRelevanceValue = ppf.averageParentPage.get(link);
-        String result = calculateProbs(link, pRelevanceValue, div_count[0], div_count[1]);
-        if(result.equals("yes") && vectorToSearch.contains(link) == false && vectorUrlsDiscarded.contains(link) == false)
-        {
-           //System.out.println("Accepted: " + u);
-           vectorToSearch.add(link);
+        String result = "";
+        ParentPageFinder ppf = new ParentPageFinder(wt); 
+        ppf.doScrape(url);
+        try
+        {            
+            pRelevanceValue = ppf.averageParentPage.get(url);
+            result = calculateProbs(url, pRelevanceValue, div_count[0], div_count[1]);
+//            if(result.equals("yes") && vectorToSearch.contains(link) == false && vectorUrlsDiscarded.contains(link) == false)
+//            {
+//               //System.out.println("Accepted: " + u);
+//               vectorToSearch.add(link);
+//            }
+//            else
+//            {
+//               //System.out.println("Discarded: " + u);
+//               vectorUrlsDiscarded.add(link);
+//            }           
+           
         }
-        else
+        catch(Exception e)
         {
-           //System.out.println("Discarded: " + u);
-           vectorUrlsDiscarded.add(link);
+            e.printStackTrace();
         }
         return result;
     }
@@ -267,7 +267,7 @@ public class RelevanceCalculator extends Thread
     
     public void run()
     {
-        findRelevancy();
+        //findRelevancy();
     }
     
 }

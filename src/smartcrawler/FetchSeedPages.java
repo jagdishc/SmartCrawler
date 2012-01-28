@@ -66,7 +66,7 @@ public class FetchSeedPages extends Thread {
             SmartCrawler sc = new SmartCrawler(dirLocation, weights);
             sc.addSeedUrls(urls);
             sc.start();
-            System.out.println("Finished");
+            //System.out.println("Finished");
         }
         catch(Exception ex)
         {

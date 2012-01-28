@@ -95,14 +95,12 @@ public class SmartCrawler extends Thread
                         }
                         temp[0] = count/size;
                         temp[1] = acount/size;
-                        url_div.put(absUrl, temp);
-                        rc = new RelevanceCalculator(loc,absUrl, temp, weight, vectorToSearch, vectorUrlsDiscarded);
-                        rc.start();
+                        url_div.put(absUrl, temp);                       
                     }
                     
                 }
             }
-            //checkRelevancy();
+            checkRelevancy();
         }
         catch(Exception e)
         {
@@ -112,24 +110,22 @@ public class SmartCrawler extends Thread
     
     public void checkRelevancy()
     {
-       
+       RelevanceCalculator rc = new RelevanceCalculator(loc);
        for(Iterator<String> iter = url_div.keySet().iterator();iter.hasNext();)
        {
            String u = iter.next(), result;
-           double[] div = url_div.get(u);
-           //result = rc.findRelevancy();
-           //rc = new RelevanceCalculator(loc,u, div, weight);
-           //result = rc.start();
-//           if(result.equals("yes") && vectorToSearch.contains(u) == false && vectorUrlsDiscarded.contains(u) == false)
-//           {
-//               //System.out.println("Accepted: " + u);
-//               vectorToSearch.add(u);
-//           }
-//           else
-//           {
-//               //System.out.println("Discarded: " + u);
-//               vectorUrlsDiscarded.add(u);
-//           }
+           double[] div = url_div.get(u);         
+           result = rc.findRelevancy(u, weight,div);
+           if(result.equals("yes") && vectorToSearch.contains(u) == false && vectorUrlsDiscarded.contains(u) == false)
+           {
+               //System.out.println("Accepted: " + u);
+               vectorToSearch.add(u);
+           }
+           else
+           {
+               //System.out.println("Discarded: " + u);
+               vectorUrlsDiscarded.add(u);
+           }
        }
     }
     
