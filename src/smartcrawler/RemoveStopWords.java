@@ -47,7 +47,7 @@ public class RemoveStopWords {
                 newtext += word + " ";
             }
         }
-        System.out.println("After removing:" + newtext);
+        //System.out.println("After removing:" + newtext);
         return newtext;
     }
     

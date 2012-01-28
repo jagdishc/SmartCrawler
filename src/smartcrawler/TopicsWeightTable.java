@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * TopicsWeightTable.java
- *
- * Created on Jan 23, 2012, 9:42:32 PM
- */
 package smartcrawler;
 
 import java.util.Iterator;
@@ -16,10 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.DefaultListModel;
 
-/**
- *
- * @author Jagdish
- */
+
 public class TopicsWeightTable extends javax.swing.JFrame {
 
     /** Creates new form TopicsWeightTable */
@@ -36,24 +23,25 @@ public class TopicsWeightTable extends javax.swing.JFrame {
         initComponents();
         String word;
         Double[] temp;
-        topicWords = new TreeMap<String, Double[]>();        
-        model.add(0, "Topic Word    -    Weight");
+        topicWords = new TreeMap<String, Double[]>();   
+        String x = "Topic Word     occurence     Weight";
+        model.add(0, x);
         for (Iterator<String> it = map.keySet().iterator(); it.hasNext(); ) 
         {
             word = it.next();
             temp = map.get(word);
-            if(temp[0] > 2)
+            if(temp[0] > 4)
             {
                 topicWords.put(word, temp);
-                display(word, temp[1]);
+                display(word, temp[0], temp[1]);
             }            
         }
         
         
     }
-    private void display(String word, Double weight)
+    private void display(String word, Double occ, Double weight)
     {
-        String addme = word + "    -    " + weight.toString();
+        String addme = word + "     " + occ.toString() + "     " + weight.toString();
         int pos = this.topicWordsList.getModel().getSize();
         model.add(pos, addme);
     }
@@ -91,23 +79,22 @@ public class TopicsWeightTable extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(listLabel))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(187, 187, 187)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addGap(33, 33, 33)
+                .addComponent(listLabel)
+                .addContainerGap(426, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(118, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(107, 107, 107))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(41, Short.MAX_VALUE)
                 .addComponent(listLabel)
-                .addGap(33, 33, 33)
+                .addGap(41, 41, 41)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(74, 74, 74))
+                .addGap(66, 66, 66))
         );
 
         pack();

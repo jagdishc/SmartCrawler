@@ -5,8 +5,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.Vector;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,7 +22,7 @@ public class FetchSeedPages extends Thread {
     
     FetchProgress fp;
     File urlFile,dirLocation;
-    TopicsWeightTable TWT;
+    
     
     public FetchSeedPages(String file, String location)
     {
@@ -37,12 +41,14 @@ public class FetchSeedPages extends Thread {
         {
             BufferedReader br = new BufferedReader(new FileReader(urlFile));
             Elements ele;
+            List urls = new ArrayList();
             String name = urlFile.getName();            
             String text, url;
             Document doc;
             BufferedWriter bw;
             while((url = br.readLine()) != null)
-            {          
+            {   
+                urls.add(url);
                 doc = Jsoup.connect(url).get();
                 text = doc.text();
                 ele = doc.select("title");
@@ -56,9 +62,10 @@ public class FetchSeedPages extends Thread {
                 bw.close();               
             }
             ConstructTable constructor = new ConstructTable(dirLocation);
-            Map<String, Double[]> weights = constructor.constructTable();
-            TWT = new TopicsWeightTable(weights);
-            TWT.setVisible(true);
+            TreeMap<String, Double[]> weights = constructor.constructTable();            
+            SmartCrawler sc = new SmartCrawler(dirLocation, weights);
+            sc.addSeedUrls(urls);
+            sc.start();
             System.out.println("Finished");
         }
         catch(Exception ex)

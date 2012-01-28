@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 class MyFilter implements FileFilter 
 {
@@ -34,14 +36,17 @@ public class ConstructTable {
         
     }
     
-    public Map<String, Double[]> constructTable()
-    {        
+    public TreeMap<String, Double[]> constructTable()
+    {     
+        
         try
         {
             File fileList[] = locationPath.listFiles(new MyFilter());            
-            File stemLocation = stemming(fileList);    
+            //File stemLocation = stemming(fileList);    
             TfIdf tfidf = new TfIdf(locationPath);
-            tfidf.documentBuilder();   
+            tfidf.documentBuilder();           
+            //TopicsWeightTable TWT = new TopicsWeightTable(tfidf.words);
+            //TWT.setVisible(true);
             return tfidf.words;
         }
         catch(Exception ex)

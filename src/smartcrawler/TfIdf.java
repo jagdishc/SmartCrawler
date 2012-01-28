@@ -1,9 +1,11 @@
 package smartcrawler;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,11 +35,10 @@ class Document
      double vectorlength;
      
      public Document(BufferedReader br, TfIdf parent)
-     {
-         String line;
+     {         
          sum_of_words = 0;
          vectorlength = 0;
-         String word;
+         String word,line;
          StringTokenizer tokens;
          Double[] tempdata;
          words = new TreeMap<String, Double[]>();
@@ -68,8 +69,8 @@ class Document
             for (Iterator<String> it = words.keySet().iterator(); it.hasNext(); ) 
             {
                     word = it.next();
-                    tempdata = words.get(word);
-                    tempdata[1] = tempdata[0] / (float) sum_of_words;
+                    tempdata = words.get(word);                    
+                    tempdata[1] = tempdata[0] / (float) sum_of_words;//                    
                     words.put(word,tempdata);
                     parent.addWordOccurence(word);
             }  
@@ -84,30 +85,43 @@ class Document
         String word;
         Double[] corpusdata;
         Double[] worddata;
-        double tfidf;
-        for (Iterator<String> it = words.keySet().iterator(); it.hasNext(); ) 
+        File twt = new File(parent.locationDir + "\\twt.txt");
+        try
         {
-            word = it.next();
-            corpusdata= parent.corpus.get(word);
-            worddata = words.get(word);
-            tfidf = worddata[1] * corpusdata[1];
-            worddata[2] = tfidf;
-            vectorlength += tfidf * tfidf;
-            words.put(word, worddata);
-            parent.words.put(word, worddata);
-            System.out.println(word + " = " + worddata[0] + ", " + worddata[1] + ", " + worddata[2]);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(twt));
+            double tfidf;        
+            for (Iterator<String> it = words.keySet().iterator(); it.hasNext();) 
+            {
+                word = it.next();
+                corpusdata= parent.corpus.get(word);
+                worddata = words.get(word);
+                tfidf = worddata[1] * corpusdata[1];
+                worddata[2] = tfidf;
+                vectorlength += tfidf * tfidf;
+                words.put(word, worddata);
+                parent.words.put(word, worddata);
+                bw.write(word + "-" + worddata[0] + "-" + worddata[1]);
+                bw.write("\n");
+                //System.out.println(word + " = " + worddata[0] + ", " + worddata[1] + ", " + worddata[2]);
+            }
+            vectorlength = Math.sqrt(vectorlength);
+            bw.close();
         }
-        vectorlength = Math.sqrt(vectorlength);
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
      }
 }
 
 public class TfIdf {
     
     File locationDir;    
-    Map<String, Double[]> corpus; 
-    Map<String, Double[]>words;
-    Map<String, Document> documents;    
-    static int totalDocs,numOfDocs;
+    TreeMap<String, Double[]> corpus; 
+    TreeMap<String, Double[]>words;
+    TreeMap<String, Document> documents;    
+    static int totalDocs,numOfDocs;    
     
     public TfIdf(File stemLocation)
     {
@@ -164,7 +178,7 @@ public class TfIdf {
         for (Iterator<String> it = documents.keySet().iterator(); it.hasNext(); ) 
         {
             word = it.next();
-            documents.get(word).calculateTfIdf(this);
-        }        
+            documents.get(word).calculateTfIdf(this);           
+        }         
     }    
 }
