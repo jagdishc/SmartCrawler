@@ -1,11 +1,11 @@
 package smartcrawler;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.util.HashMap;
+import java.io.FileWriter;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -26,22 +26,31 @@ class values
 public class RelevanceCalculator extends Thread
 {
     File loc;    
-    int total = 0, no_of_yes = 0, no_of_no = 0;
+    int total = 0, no_of_yes = 0, no_of_no = 0, accepted = 0, total_urls = 0;
     float p_of_yes, p_of_no;
     Vector valueVector;
-    values value;              
+    values value;        
+    Progress progress;
+    BufferedWriter bw;
+    FileWriter fw;
     
     public RelevanceCalculator(File location)
     {
         loc = location;       
-        String url,text;
+        String url,text;           
+       
         StringTokenizer tokens;
         String[] data = new String[4];
         valueVector = new Vector();        
-        
+        progress = new Progress();
+        progress.progressInfo.setEditable(false);
+        progress.progressInfo.setText("");
+        progress.setVisible(true);
         try
         {
-            BufferedReader br = new BufferedReader(new FileReader(loc+"\\training_set.txt"));
+            BufferedReader br = new BufferedReader(new FileReader(loc+"\\training\\training_set.txt"));   
+            fw = new FileWriter(loc + "\\training\\training_set.txt",true);    
+            bw = new BufferedWriter(fw);
             while((text = br.readLine())!=null)
             {
                 total += 1;
@@ -65,6 +74,7 @@ public class RelevanceCalculator extends Thread
                 p_of_no = (float)no_of_no/total;
                 
                 value = new values(url, data[0],data[1],data[2],data[3]);
+                
                 valueVector.add(value);
                 //trainer.put(url, data);
             }
@@ -79,23 +89,24 @@ public class RelevanceCalculator extends Thread
     {
         Double pRelevanceValue;
         String result = "";
+        System.out.println(url);
+        progress.progressInfo.append("Calculating parent page relevancy of " + url + "\n");
         ParentPageFinder ppf = new ParentPageFinder(wt); 
-        ppf.doScrape(url);
+        ppf.doScrape(url);       
         try
         {            
-            pRelevanceValue = ppf.averageParentPage.get(url);
-            result = calculateProbs(url, pRelevanceValue, div_count[0], div_count[1]);
-//            if(result.equals("yes") && vectorToSearch.contains(link) == false && vectorUrlsDiscarded.contains(link) == false)
-//            {
-//               //System.out.println("Accepted: " + u);
-//               vectorToSearch.add(link);
-//            }
-//            else
-//            {
-//               //System.out.println("Discarded: " + u);
-//               vectorUrlsDiscarded.add(link);
-//            }           
-           
+            pRelevanceValue = ppf.averageParentPage.get(url);            
+            total_urls += 1;
+            result = calculateProbs(url, pRelevanceValue, div_count[0], div_count[1]); 
+            if(result.equals("yes"))
+            {
+                accepted += 1;
+                progress.progressInfo.append("Accepted: " + url + "\n");
+            }
+            else
+            {
+                progress.progressInfo.append("Discarded: " + url + "\n");
+            }            
         }
         catch(Exception e)
         {
@@ -171,16 +182,9 @@ public class RelevanceCalculator extends Thread
         String[] data = new String[5];
         data[0] = url;
         String parent, div, anchor;
-        float relevant_yes, relevant_no, temp_parent[], temp_div[], temp_anchor[];
+        float relevant_yes, relevant_no, temp_parent[], temp_div[], temp_anchor[];        
         
-//        System.out.println("P(yes): " + p_of_yes);
-//        System.out.println("P(no): " + p_of_no);
-//        
-//        System.out.println("n(yes): " + no_of_yes);
-//        System.out.println("n(no): " + no_of_no);
-//        
-//        System.out.println("Total: " + total);
-        if(parent_score > 0.4)
+        if(parent_score > 0.6)
         {
             parent = "yes";
         }
@@ -188,7 +192,7 @@ public class RelevanceCalculator extends Thread
         {
             parent = "no";
         }
-        if(div_score > 0.4)
+        if(div_score > 0.2)
         {
             div = "yes";
         }
@@ -204,27 +208,14 @@ public class RelevanceCalculator extends Thread
         {
             anchor = "no";
         }
-        
-//        System.out.println("parent: " + parent);
-        
+                
         temp_parent = getCount("parent", parent);
         temp_div = getCount("div", div);
         temp_anchor = getCount("anchor", anchor);
         
         relevant_yes = temp_parent[0]*temp_div[0]*temp_anchor[0];
         relevant_no = temp_parent[1]*temp_div[1]*temp_anchor[1];
-        
-//        System.out.println("parent_s: " + temp_parent[0]);
-//        System.out.println("div_s: " + temp_div[0]);
-//        System.out.println("anchor_s: " + temp_anchor[0]);
-//        
-//        System.out.println("parent_n: " + temp_parent[1]);
-//        System.out.println("div_n: " + temp_div[1]);
-//        System.out.println("anchor_n: " + temp_anchor[1]);
-//        
-//        System.out.println("relevant_yes: " + relevant_yes);
-//        System.out.println("relevant_no: " + relevant_no);
-        
+                
         values temp;
         
         if((relevant_yes*p_of_yes) > (relevant_no*p_of_no))
@@ -237,6 +228,15 @@ public class RelevanceCalculator extends Thread
             p_of_yes = (float) no_of_yes/total;
             p_of_no = (float) no_of_no/total;
             System.out.println(url + "-" + parent + "-" + div + "-" + anchor + "-" + "yes " + "n(yes): " + no_of_yes);
+            try
+            {
+                bw.write(url + "," + parent + "," + div + "," + anchor + ",yes\n");
+                bw.flush();
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
             return "yes";
         }
         else if((relevant_yes*p_of_yes) < (relevant_no*p_of_no))
@@ -249,6 +249,15 @@ public class RelevanceCalculator extends Thread
             p_of_no = (float) no_of_no/total;
             p_of_yes = (float) no_of_yes/total;
             System.out.println(url + "-" + parent + "-" + div + "-" + anchor + "-" + "no " + "n(no): " + no_of_no);
+            try
+            {
+                bw.write(url + "," + parent + "," + div + "," + anchor + ",no\n");
+                bw.flush();
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
             return "no";
         }
         else
@@ -261,6 +270,15 @@ public class RelevanceCalculator extends Thread
             p_of_no = (float) no_of_no/total;
             System.out.println("In Else..");
             System.out.println(url + "-" + parent + "-" + div + "-" + anchor + "-" + "yes " + "n(yes): " + no_of_yes);
+            try
+            {
+                bw.write(url + "," + parent + "," + div + "," + anchor + ",yes\n");
+                bw.flush();
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
             return "yes";
         }        
     }

@@ -6,28 +6,27 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.Vector;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
-public class FetchSeedPages extends Thread {
+public class FetchSeedPages extends Thread 
+{
     
-    FetchProgress fp;
+    Progress fp;
     File urlFile,dirLocation;
+    SmartCrawlerView smc;
+    Object lock;
     
-    
-    public FetchSeedPages(String file, String location)
+    public FetchSeedPages(String file, String location, SmartCrawlerView smc, Object lock)
     {
         urlFile = new File(file);
         dirLocation = new File(location);        
+        this.smc = smc;
+        this.lock = lock;
     }
     
     public void run()
@@ -46,24 +45,32 @@ public class FetchSeedPages extends Thread {
             String text, url;
             Document doc;
             BufferedWriter bw;
+            int i = 0;
             while((url = br.readLine()) != null)
             {   
                 urls.add(url);
                 doc = Jsoup.connect(url).get();
                 text = doc.text();
-                ele = doc.select("title");
-                name = ele.text();
-                System.out.println(name.trim());
-                bw = new BufferedWriter(new FileWriter(dirLocation + "\\" + name + ".txt"));           
+                //ele = doc.select("title");
+                //name = ele.text().substring(0, 8);
+                System.out.println("page: " + i);
+                bw = new BufferedWriter(new FileWriter(dirLocation + "\\data-" + i + ".txt"));     
+                i += 1;
                 text = text.toLowerCase();               
                 RemoveStopWords remove = new RemoveStopWords();
                 text = remove.remove(text);
                 bw.write(text);
                 bw.close();               
             }
+            smc.infoLabel.setText("Seed pages are fetched.");           
             ConstructTable constructor = new ConstructTable(dirLocation);
-            TreeMap<String, Double[]> weights = constructor.constructTable();            
-            SmartCrawler sc = new SmartCrawler(dirLocation, weights);
+            TreeMap<String, Double[]> weights = constructor.constructTable();         
+            smc.infoLabel.setText("Topics weight table contructed.");   
+            synchronized(lock)
+            {
+                lock.wait();
+            }
+            SmartCrawler sc = new SmartCrawler(dirLocation, weights, smc);
             sc.addSeedUrls(urls);
             sc.start();
             //System.out.println("Finished");

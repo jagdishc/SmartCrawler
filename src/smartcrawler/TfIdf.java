@@ -6,14 +6,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 class TextFilter implements FileFilter
 {
@@ -85,10 +80,11 @@ class Document
         String word;
         Double[] corpusdata;
         Double[] worddata;
-        File twt = new File(parent.locationDir + "\\twt.txt");
+        File twt = new File(parent.locationDir + "\\topicsweighttable");
+        twt.mkdir();
         try
-        {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(twt));
+        {            
+            BufferedWriter bw = new BufferedWriter(new FileWriter(twt + "\\twt.txt",true));
             double tfidf;        
             for (Iterator<String> it = words.keySet().iterator(); it.hasNext();) 
             {
@@ -102,6 +98,7 @@ class Document
                 parent.words.put(word, worddata);
                 bw.write(word + "-" + worddata[0] + "-" + worddata[1]);
                 bw.write("\n");
+                bw.flush();
                 //System.out.println(word + " = " + worddata[0] + ", " + worddata[1] + ", " + worddata[2]);
             }
             vectorlength = Math.sqrt(vectorlength);
@@ -160,17 +157,17 @@ public class TfIdf {
     public void addWordOccurence(String word)
     {
         Double[] tempdata;
-                if (corpus.get(word) == null) 
-                {
-                    tempdata = new Double[]{1.0,0.0};
-                    corpus.put(word, tempdata);
-                } 
-                else 
-                {
-                    tempdata = corpus.get(word);
-                    tempdata[0]++;
-                    corpus.put(word,tempdata);                        
-                }            
+        if (corpus.get(word) == null) 
+        {
+            tempdata = new Double[]{1.0,0.0};
+            corpus.put(word, tempdata);
+        } 
+        else 
+        {
+            tempdata = corpus.get(word);
+            tempdata[0]++;
+            corpus.put(word,tempdata);                        
+        }            
     }
     private void score()
     {

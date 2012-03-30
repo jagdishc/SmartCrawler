@@ -1,13 +1,9 @@
 package smartcrawler;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -25,14 +21,19 @@ public class SmartCrawler extends Thread
     TreeMap<String, Double> weight;
     int size = 1, limit = 15;
     File loc;
-        
-    public SmartCrawler(File location, TreeMap<String, Double[]> twt)
+    RelevanceCalculator rc;
+    final static Object syncObj = new Object();
+    SmartCrawlerView smc;
+    
+    public SmartCrawler(File location, TreeMap<String, Double[]> twt, SmartCrawlerView smc)
     {       
         loc = location;
         url_div = new HashMap<String, double[]>();
         vectorToSearch = new Vector();
         vectorSearched = new Vector();    
         vectorUrlsDiscarded = new Vector();
+        this.smc = smc;
+        rc = new RelevanceCalculator(loc);
         weight = new TreeMap<String, Double>();
         try
         {
@@ -62,45 +63,56 @@ public class SmartCrawler extends Thread
     {
         Document doc;
         Elements anchorTags, parents;
-        String anchor_txt;
-        RelevanceCalculator rc;
+        String anchor_txt;      
+        int linkcount = 0, limitcount = 5;
         try
         {
-            for(Iterator<String> it = vectorToSearch.iterator();it.hasNext();)
-            {                
-                doc = Jsoup.connect(it.next()).get();
+            //for(Iterator<String> it = vectorToSearch.iterator();it.hasNext();)
+            while(vectorToSearch.size()>0)
+            {
+                linkcount = 0;
+                String u = vectorToSearch.elementAt(0).toString();
+                doc = Jsoup.connect(u).get();
+                smc.infoLabel.setText("Crawling: " + u);
                 vectorSearched.add(vectorToSearch.remove(0));
                 anchorTags = doc.select("a");
                 parents = anchorTags.parents().select("div");
                 double[] temp = new double[2];
                 for(Element links:anchorTags)
                 {
-                    String absUrl = links.absUrl("href");
-                    anchor_txt = links.text();
-                    if(vectorToSearch.contains(absUrl)==false && vectorSearched.contains(absUrl)==false && url_div.containsKey(absUrl)==false && vectorUrlsDiscarded.contains(absUrl)==false)
+                    linkcount += 1;
+                    if(linkcount < limitcount)
                     {
-                        String txt = parents.text();
-                        int count = 0, acount = 0;
-                        for(Iterator<String> it2 = weight.keySet().iterator(); it2.hasNext();)
+                        String absUrl = links.absUrl("href");
+                        anchor_txt = links.text();
+                        if(vectorToSearch.contains(absUrl)==false && vectorSearched.contains(absUrl)==false && url_div.containsKey(absUrl)==false && vectorUrlsDiscarded.contains(absUrl)==false && absUrl.equals("") == false)
                         {
-                            it2.next();
-                            if(txt.contains(it2.toString()))
+                            String txt = parents.text();
+                            int count = 0, acount = 0;
+                            for(Iterator<String> it2 = weight.keySet().iterator(); it2.hasNext();)
                             {
-                                count += 1;
+                                it2.next();
+                                if(txt.contains(it2.toString()))
+                                {
+                                    count += 1;
+                                }
+                                if(anchor_txt.contains(it2.toString()))
+                                {
+                                    acount += 1;
+                                }
                             }
-                            if(anchor_txt.contains(it2.toString()))
-                            {
-                                acount += 1;
-                            }
-                        }
-                        temp[0] = count/size;
-                        temp[1] = acount/size;
-                        url_div.put(absUrl, temp);                       
-                    }
-                    
+                            temp[0] = count/size;
+                            temp[1] = acount/size;
+                            url_div.put(absUrl, temp);                       
+                        }                    
+                    }                   
                 }
             }
+            smc.infoLabel.setText("Calculating relevancy for extracted links");
             checkRelevancy();
+            Integer val1 = rc.accepted;
+            Integer val2 = rc.total_urls;
+            rc.progress.progressInfo.append(val1.toString() + " are accepted out of " + val2.toString());
         }
         catch(Exception e)
         {
@@ -109,32 +121,35 @@ public class SmartCrawler extends Thread
     }
     
     public void checkRelevancy()
-    {
-       RelevanceCalculator rc = new RelevanceCalculator(loc);
+    {       
        for(Iterator<String> iter = url_div.keySet().iterator();iter.hasNext();)
        {
            String u = iter.next(), result;
-           double[] div = url_div.get(u);         
-           result = rc.findRelevancy(u, weight,div);
-           if(result.equals("yes") && vectorToSearch.contains(u) == false && vectorUrlsDiscarded.contains(u) == false)
+           double[] div = url_div.get(u);   
+           if(vectorToSearch.contains(u) == false && vectorUrlsDiscarded.contains(u) == false)
            {
-               //System.out.println("Accepted: " + u);
-               vectorToSearch.add(u);
-           }
-           else
-           {
-               //System.out.println("Discarded: " + u);
-               vectorUrlsDiscarded.add(u);
+               result = rc.findRelevancy(u, weight,div);
+               if(result.equals("yes"))
+               {
+                   //System.out.println("Accepted: " + u);
+                   vectorToSearch.add(u);
+               }
+               else
+               {
+                   //System.out.println("Discarded: " + u);
+                   vectorUrlsDiscarded.add(u);
+               }
            }
        }
     }
     
     public void run()
     {
-        if(vectorSearched.size() <= limit)
+        while(vectorSearched.size() <= limit)
         {
             crawl();
         }
+        System.out.println("Finished");
     }
     
 }

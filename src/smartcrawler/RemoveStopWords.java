@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class RemoveStopWords {
@@ -17,7 +19,7 @@ public class RemoveStopWords {
     public RemoveStopWords()
     {
         stopwords = new HashMap<String, Boolean>();
-        File stoplist = new File("G:\\Java\\SmartCrawler\\src\\smartcrawler\\stopwords.txt");        
+        File stoplist = new File("stopwords.txt");        
         String line;
         try
         {
@@ -37,12 +39,13 @@ public class RemoveStopWords {
     
     public String remove(String text)
     {
+        String exp = "^[0-9]{1,}$";
         tokens = new StringTokenizer(text, ":; \"\',.[]{}()!?-/");
         String word, newtext = "";
         while(tokens.hasMoreTokens())
         {
             word = tokens.nextToken();
-            if(!stopwords.containsKey(word))
+            if(!stopwords.containsKey(word) && (!word.matches(exp)) )
             {
                 newtext += word + " ";
             }

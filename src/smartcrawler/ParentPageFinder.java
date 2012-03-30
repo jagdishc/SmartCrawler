@@ -39,8 +39,8 @@ public class ParentPageFinder extends Thread
     {
         Document doc;
         String webPage = link+url+"?pid=#backlinks";
-        int i =0;
-        String[] parents = new String[5];
+        int i = 0;
+        String[] parents = new String[2];
         
         try
         {            
@@ -49,7 +49,7 @@ public class ParentPageFinder extends Thread
             Elements divs = ele.getElementsByClass("nobr"), urls;
             for(Element links : divs)
             {
-                if(i>4)
+                if(i>1)
                 {
                     break;
                 }
@@ -124,10 +124,4 @@ public class ParentPageFinder extends Thread
     {
         //doScrape();
     }
-    
-//    public static void main(String args[])
-//    {
-//        ParentPageFinder ppf = new ParentPageFinder();
-//        ppf.doScrape("www.annauniv.edu");
-//    }
 }
