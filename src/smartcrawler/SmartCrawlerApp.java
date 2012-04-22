@@ -1,7 +1,3 @@
-/*
- * SmartCrawlerApp.java
- */
-
 package smartcrawler;
 
 import org.jdesktop.application.Application;

@@ -10,18 +10,17 @@
  */
 package smartcrawler;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.UIManager;
 import org.jdesktop.application.Action;
 
-/**
- *
- * @author Jagdish
- */
 public class Progress extends javax.swing.JFrame {
 
     /** Creates new form Progress */
     public Progress() {
-        initComponents();
+        initComponents();            
         this.setTitle("Progress Status");
     }
 

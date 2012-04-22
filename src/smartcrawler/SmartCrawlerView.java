@@ -1,7 +1,3 @@
-/*
- * SmartCrawlerView.java
- */
-
 package smartcrawler;
 
 import org.jdesktop.application.Action;
@@ -11,12 +7,15 @@ import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 /**
  * The application's main frame.
@@ -27,6 +26,27 @@ public class SmartCrawlerView extends FrameView {
         super(app);
 
         initComponents();      
+        BufferedImage image = null;            
+        try
+        {
+            image = ImageIO.read(new File("lib/smart_crawler_logo.png"));           
+            getFrame().setIconImage(image);
+            Process process = Runtime.getRuntime().exec("cmd /c C:/xampp/xampp_start.exe");
+            process = Runtime.getRuntime().exec("cmd /c C:/xampp/apache_start.bat");
+            process = Runtime.getRuntime().exec("cmd /c C:/xampp/mysql_start.bat");
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }        
+        try
+        {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");                        
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         this.wc.setVisible(true);
         this.start.setVisible(true);
         // status bar initialization - message timeout, idle icon and busy animation, etc
@@ -104,14 +124,13 @@ public class SmartCrawlerView extends FrameView {
         urlListText = new javax.swing.JTextField();
         locationLabel = new javax.swing.JLabel();
         locationText = new javax.swing.JTextField();
-        urlListButton = new javax.swing.JButton();
         locationButton = new javax.swing.JButton();
         fetchSeedPages = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
         startCrawling = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
-        exitMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         wc = new javax.swing.JMenu();
         start = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
@@ -139,13 +158,6 @@ public class SmartCrawlerView extends FrameView {
         locationText.setName("locationText"); // NOI18N
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(smartcrawler.SmartCrawlerApp.class).getContext().getActionMap(SmartCrawlerView.class, this);
-        urlListButton.setAction(actionMap.get("loadUrlList")); // NOI18N
-        urlListButton.setText(resourceMap.getString("urlListButton.text")); // NOI18N
-        urlListButton.setMaximumSize(new java.awt.Dimension(45, 20));
-        urlListButton.setMinimumSize(new java.awt.Dimension(45, 20));
-        urlListButton.setName("urlListButton"); // NOI18N
-        urlListButton.setPreferredSize(new java.awt.Dimension(45, 20));
-
         locationButton.setAction(actionMap.get("loadLocation")); // NOI18N
         locationButton.setText(resourceMap.getString("locationButton.text")); // NOI18N
         locationButton.setMaximumSize(new java.awt.Dimension(45, 20));
@@ -178,12 +190,10 @@ public class SmartCrawlerView extends FrameView {
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGap(41, 41, 41)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(locationText, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                            .addComponent(locationText, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
                             .addComponent(urlListText, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(53, 53, 53)
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(urlListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, Short.MAX_VALUE)
-                            .addComponent(locationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, Short.MAX_VALUE))
+                        .addComponent(locationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, Short.MAX_VALUE)
                         .addGap(138, 138, 138))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGap(4, 4, 4)
@@ -198,8 +208,7 @@ public class SmartCrawlerView extends FrameView {
                 .addGap(151, 151, 151)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(urlListLabel)
-                    .addComponent(urlListText, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(urlListButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(urlListText, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(47, 47, 47)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(locationLabel)
@@ -306,7 +315,7 @@ public class SmartCrawlerView extends FrameView {
 
     @Action
     public void loadLocation() {
-        JFileChooser fc = new JFileChooser();
+        JFileChooser fc = new JFileChooser(new File("."));
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int reval = fc.showOpenDialog(fc);
         if(reval == JFileChooser.APPROVE_OPTION)
@@ -341,9 +350,7 @@ public class SmartCrawlerView extends FrameView {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JButton fetchSeedPages;
-    private javax.swing.JMenu fileMenu;
     public javax.swing.JLabel infoLabel;
     private javax.swing.JButton locationButton;
     private javax.swing.JLabel locationLabel;
@@ -355,7 +362,6 @@ public class SmartCrawlerView extends FrameView {
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
-    private javax.swing.JButton urlListButton;
     private javax.swing.JLabel urlListLabel;
     private javax.swing.JTextField urlListText;
     private javax.swing.JMenu wc;

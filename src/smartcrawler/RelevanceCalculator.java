@@ -1,10 +1,14 @@
 package smartcrawler;
 
+import java.sql.Connection;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -33,13 +37,15 @@ public class RelevanceCalculator extends Thread
     Progress progress;
     BufferedWriter bw;
     FileWriter fw;
+    Connection conn = null;
+    Statement st;
+    ResultSet res;
     
     public RelevanceCalculator(File location)
     {
         loc = location;       
-        String url,text;           
-       
-        StringTokenizer tokens;
+        String url,text;                  
+        
         String[] data = new String[4];
         valueVector = new Vector();        
         progress = new Progress();
@@ -48,36 +54,39 @@ public class RelevanceCalculator extends Thread
         progress.setVisible(true);
         try
         {
-            BufferedReader br = new BufferedReader(new FileReader(loc+"\\training\\training_set.txt"));   
-            fw = new FileWriter(loc + "\\training\\training_set.txt",true);    
-            bw = new BufferedWriter(fw);
-            while((text = br.readLine())!=null)
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/smart_crawler", "root", "");            
+            st = conn.createStatement();
+            res = st.executeQuery("select * from training_set");
+            while(res.next())
             {
-                total += 1;
-                tokens = new StringTokenizer(text, ",");
-                url = tokens.nextToken();
-                data[0] = tokens.nextToken();
-                data[1] = tokens.nextToken();
-                data[2] = tokens.nextToken();
-                data[3] = tokens.nextToken();
-                
-                if(data[3].equalsIgnoreCase("yes"))
-                {
-                    no_of_yes += 1;
-                }
-                else
-                {
-                    no_of_no += 1;
-                }
-                
-                p_of_yes = (float)no_of_yes/total;
-                p_of_no = (float)no_of_no/total;
-                
-                value = new values(url, data[0],data[1],data[2],data[3]);
-                
-                valueVector.add(value);
-                //trainer.put(url, data);
+                total += 1;                
+                url = res.getString(2);
+                data[0] = res.getString(3);
+                data[1] = res.getString(4);
+                data[2] = res.getString(5);
+                data[3] = res.getString(6);
+                            
+                value = new values(url, data[0],data[1],data[2],data[3]);                
+                valueVector.add(value);               
             }
+            
+            st = conn.createStatement();
+            res = st.executeQuery("select count(total_relevancy) from training_set where total_relevancy = 'yes'");
+            while(res.next())
+            {
+                no_of_yes = res.getInt(1);
+            }
+            
+            st = conn.createStatement();
+            res = st.executeQuery("select count(total_relevancy) from training_set where total_relevancy = 'no'");
+            while(res.next())
+            {
+                no_of_no = res.getInt(1);
+            }
+           
+            p_of_yes = (float)no_of_yes/total;
+            p_of_no = (float)no_of_no/total;
         }
         catch(Exception e)
         {
@@ -121,54 +130,81 @@ public class RelevanceCalculator extends Thread
         float[] tmp = new float[2];
         if(attr.equals("parent"))
         {
-            for(Iterator<values> iter = valueVector.iterator();iter.hasNext();)
+            try
             {
-                values temp = iter.next();
-                if(temp.relevant.equals("yes") && temp.ppr.equals(class_value))
+                st = conn.createStatement();
+                res = st.executeQuery("select count(total_relevancy) from training_set where total_relevancy = 'yes' and parent = '" + class_value + "'");
+                while(res.next())
                 {
-                    yes_count += 1;
+                    yes_count = res.getInt(1);
                 }
-                else if(temp.relevant.equals("no") && temp.ppr.equals(class_value))
+               
+                st = conn.createStatement();
+                res = st.executeQuery("select count(total_relevancy) from training_set where total_relevancy = 'no' and parent = '" + class_value + "'");
+                while(res.next())
                 {
-                    no_count += 1;
+                    no_count = res.getInt(1);
                 }
-            }            
+               
+            }
+            catch(Exception ex)
+            {
+                ex.printStackTrace();
+            }
             tmp[0] = (float) yes_count/no_of_yes;
             tmp[1] = (float) no_count/no_of_no;
             return tmp;
         }
         else if(attr.equals("div"))
-        {
-            for(Iterator<values> iter = valueVector.iterator();iter.hasNext();)
+        {  
+            try
             {
-                values temp = iter.next();
-                if(temp.relevant.equals("yes") && temp.urtr.equals(class_value))
+                st = conn.createStatement();
+                res = st.executeQuery("select count(total_relevancy) from training_set where total_relevancy = 'yes' and divi = '" + class_value + "'");
+                while(res.next())
                 {
-                    yes_count += 1;
+                    yes_count = res.getInt(1);
                 }
-                else if(temp.relevant.equals("no") && temp.urtr.equals(class_value))
+                
+                st = conn.createStatement();
+                res = st.executeQuery("select count(total_relevancy) from training_set where total_relevancy = 'no' and divi = '" + class_value + "'");
+                while(res.next())
                 {
-                    no_count += 1;
+                    no_count = res.getInt(1);
                 }
-            }   
+                
+            }
+            catch(Exception ex)
+            {
+                ex.printStackTrace();
+            }
             tmp[0] = (float) yes_count/no_of_yes;
             tmp[1] = (float) no_count/no_of_no;
             return tmp;
         }
         else if(attr.equals("anchor"))
-        {
-            for(Iterator<values> iter = valueVector.iterator();iter.hasNext();)
+        {  
+            try
             {
-                values temp = iter.next();
-                if(temp.relevant.equals("yes") && temp.atr.equals(class_value))
+                st = conn.createStatement();
+                res = st.executeQuery("select count(total_relevancy) from training_set where total_relevancy = 'yes' and anchor = '" + class_value + "'");
+                while(res.next())
                 {
-                    yes_count += 1;
+                    yes_count = res.getInt(1);
                 }
-                else if(temp.relevant.equals("no") && temp.atr.equals(class_value))
+                
+                st = conn.createStatement();
+                res = st.executeQuery("select count(total_relevancy) from training_set where total_relevancy = 'no' and anchor = '" + class_value + "'");
+                while(res.next())
                 {
-                    no_count += 1;
+                    no_count = res.getInt(1);
                 }
-            }   
+                
+            }
+            catch(Exception ex)
+            {
+                ex.printStackTrace();
+            }
             tmp[0] = (float)yes_count/no_of_yes;
             tmp[1] = (float)no_count/no_of_no;
             return tmp;
@@ -230,13 +266,13 @@ public class RelevanceCalculator extends Thread
             System.out.println(url + "-" + parent + "-" + div + "-" + anchor + "-" + "yes " + "n(yes): " + no_of_yes);
             try
             {
-                bw.write(url + "," + parent + "," + div + "," + anchor + ",yes\n");
-                bw.flush();
+                st = conn.createStatement();
+                st.executeUpdate("insert into training_set (Id, url, parent, divi, anchor, total_relevancy) values(" + total + ", '" + url + "', '" + parent + "', '" + div + "', ' " + anchor + "', 'yes')" );
             }
             catch(Exception e)
             {
                 e.printStackTrace();
-            }
+            }            
             return "yes";
         }
         else if((relevant_yes*p_of_yes) < (relevant_no*p_of_no))
@@ -251,8 +287,8 @@ public class RelevanceCalculator extends Thread
             System.out.println(url + "-" + parent + "-" + div + "-" + anchor + "-" + "no " + "n(no): " + no_of_no);
             try
             {
-                bw.write(url + "," + parent + "," + div + "," + anchor + ",no\n");
-                bw.flush();
+                st = conn.createStatement();
+                st.executeUpdate("insert into training_set (Id, url, parent, divi, anchor, total_relevancy) values(" + total + ", '" + url + "', '" + parent + "', '" + div + "', ' " + anchor + "', 'no')" );
             }
             catch(Exception e)
             {
@@ -272,8 +308,8 @@ public class RelevanceCalculator extends Thread
             System.out.println(url + "-" + parent + "-" + div + "-" + anchor + "-" + "yes " + "n(yes): " + no_of_yes);
             try
             {
-                bw.write(url + "," + parent + "," + div + "," + anchor + ",yes\n");
-                bw.flush();
+                st = conn.createStatement();
+                st.executeUpdate("insert into training_set (Id, url, parent, divi, anchor, total_relevancy) values(" + total + ", '" + url + "', '" + parent + "', '" + div + "', '" + anchor + "', 'yes')" );             
             }
             catch(Exception e)
             {
@@ -285,7 +321,7 @@ public class RelevanceCalculator extends Thread
     
     public void run()
     {
-        //findRelevancy();
+        
     }
     
 }

@@ -21,14 +21,11 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="locationText" pref="236" max="32767" attributes="1"/>
+                              <Component id="locationText" pref="245" max="32767" attributes="1"/>
                               <Component id="urlListText" alignment="0" min="-2" pref="231" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="urlListButton" pref="27" max="32767" attributes="1"/>
-                              <Component id="locationButton" alignment="0" pref="27" max="32767" attributes="1"/>
-                          </Group>
+                          <Component id="locationButton" pref="36" max="32767" attributes="1"/>
                           <EmptySpace min="-2" pref="138" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -49,7 +46,6 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="urlListLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="urlListText" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                      <Component id="urlListButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -93,24 +89,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="locationText.text"/>
             <Property name="name" type="java.lang.String" value="locationText" noResource="true"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="urlListButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="smartcrawler.SmartCrawlerView" id="loadUrlList" methodName="loadUrlList"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="urlListButton.text"/>
-            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[45, 20]"/>
-            </Property>
-            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[45, 20]"/>
-            </Property>
-            <Property name="name" type="java.lang.String" value="urlListButton" noResource="true"/>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[45, 20]"/>
-            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="locationButton">

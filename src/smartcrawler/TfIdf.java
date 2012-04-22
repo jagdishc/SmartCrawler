@@ -98,8 +98,7 @@ class Document
                 parent.words.put(word, worddata);
                 bw.write(word + "-" + worddata[0] + "-" + worddata[1]);
                 bw.write("\n");
-                bw.flush();
-                //System.out.println(word + " = " + worddata[0] + ", " + worddata[1] + ", " + worddata[2]);
+                bw.flush();                
             }
             vectorlength = Math.sqrt(vectorlength);
             bw.close();

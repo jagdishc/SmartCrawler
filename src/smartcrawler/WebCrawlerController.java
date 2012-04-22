@@ -1,21 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * WebCrawlerController.java
- *
- * Created on Mar 18, 2012, 11:11:04 PM
- */
 package smartcrawler;
 
 import org.jdesktop.application.Action;
 
-/**
- *
- * @author Jagdish
- */
 public class WebCrawlerController extends javax.swing.JFrame {
 
     /** Creates new form WebCrawlerController */

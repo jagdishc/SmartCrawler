@@ -142,12 +142,6 @@ public class LinkCrawler_MultipleThreads implements Runnable
                 Integer val = ob.count;
                 wch.total.setText("Total crawled: " + val.toString());
             }
-//            if(c_url.equals("http://docs.python.org/py-modindex.html"))
-//            {
-//                int c = index-1;
-//                System.out.println("Index :" + c);
-//            }
-            
             String type ="";
             
                 if(ob.count<maxCrawlCount)

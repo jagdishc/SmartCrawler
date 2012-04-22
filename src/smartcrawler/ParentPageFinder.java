@@ -64,10 +64,8 @@ public class ParentPageFinder extends Thread
             if(!(parentPages.containsKey(url)))
             {
                 parentPages.put(url, parents);                
-            }           
-
-            getParentPageRelevancy(url, parents);
-                
+            }
+            getParentPageRelevancy(url, parents);                
              
         }
         catch(Exception e)
@@ -90,18 +88,18 @@ public class ParentPageFinder extends Thread
             {
                 try
                 {
-                doc = Jsoup.connect(parents[i]).get();                
-                text = doc.text();
-                text = rm.remove(text);
-                tokens = new StringTokenizer(text, ":; \"\',.[]{}()!?-/");
-                while(tokens.hasMoreTokens())
-                {
-                    word = tokens.nextToken();
-                    if(wt.containsKey(word))
+                    doc = Jsoup.connect(parents[i]).get();                
+                    text = doc.text();
+                    text = rm.remove(text);
+                    tokens = new StringTokenizer(text, ":; \"\',.[]{}()!?-/");
+                    while(tokens.hasMoreTokens())
                     {
-                        relevanceValue += wt.get(word);
+                        word = tokens.nextToken();
+                        if(wt.containsKey(word))
+                        {
+                            relevanceValue += wt.get(word);
+                        }
                     }
-                }
                 }
                 catch(Exception e)
                 {
@@ -122,6 +120,6 @@ public class ParentPageFinder extends Thread
     
     public void run()
     {
-        //doScrape();
+        
     }
 }

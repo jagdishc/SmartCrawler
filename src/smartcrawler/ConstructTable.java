@@ -40,13 +40,9 @@ public class ConstructTable {
     {     
         
         try
-        {
-            File fileList[] = locationPath.listFiles(new MyFilter());            
-            //File stemLocation = stemming(fileList);    
+        {                                  
             TfIdf tfidf = new TfIdf(locationPath);
-            tfidf.documentBuilder();           
-            //TopicsWeightTable TWT = new TopicsWeightTable(tfidf.words);
-            //TWT.setVisible(true);
+            tfidf.documentBuilder();                       
             return tfidf.words;
         }
         catch(Exception ex)
